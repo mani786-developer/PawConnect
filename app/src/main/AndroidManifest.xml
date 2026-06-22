@@ -19,6 +19,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AuthApp">
         <activity
+            android:name=".ui.Chat.InboxActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.Chat.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.Appointments.VetAppointmentsActivity"
             android:exported="false" />
         <activity
@@ -73,8 +79,6 @@
         <activity
             android:name=".ui.Vets.VetProfileSetupActivity"
             android:exported="false" />
-
-
     </application>
 
 </manifest>

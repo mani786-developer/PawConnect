@@ -2,10 +2,12 @@ package com.example.authapp.di
 
 import com.example.authapp.data.repository.AppointmentRepositoryImpl
 import com.example.authapp.data.repository.AuthRepositoryImpl
+import com.example.authapp.data.repository.ChatRepositoryImpl
 import com.example.authapp.data.repository.PetRepositoryImpl
 import com.example.authapp.data.repository.VetRepositoryImpl
 import com.example.authapp.domain.repository.AppointmentRepository
 import com.example.authapp.domain.repository.AuthRepository
+import com.example.authapp.domain.repository.ChatRepository
 import com.example.authapp.domain.repository.PetRepository
 import com.example.authapp.domain.repository.VetRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -45,4 +47,7 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindAppointmentRepository(impl: AppointmentRepositoryImpl): AppointmentRepository
+
+    @Binds @Singleton
+    abstract fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
 }

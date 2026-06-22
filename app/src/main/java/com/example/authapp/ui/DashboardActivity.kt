@@ -5,13 +5,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import com.example.authapp.R
 import com.example.authapp.domain.repository.AuthRepository
+import com.example.authapp.presentation.chat.ChatViewModel
 import com.example.authapp.ui.Appointments.VetAppointmentsActivity
 import com.example.authapp.ui.Appointments.MyAppointmentsActivity
+import com.example.authapp.ui.Chat.InboxActivity
 import com.example.authapp.ui.discover.DiscoverActivity
 import com.example.authapp.ui.pets.MyPetsActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,6 +52,26 @@ class DashboardActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.tvWelcome).text = "Welcome, $displayName 👋"
                 findViewById<TextView>(R.id.tvRole).text    = roleLabel
 
+                // Show unread badge on owner + vet message cards
+                val chatViewModel: ChatViewModel by viewModels()
+                chatViewModel.loadUnreadCount()
+
+                lifecycleScope.launch {
+                    chatViewModel.unreadCount.collect { count ->
+
+                        // Owner badge
+                        findViewById<TextView>(R.id.tvMessageBadge)?.apply {
+                            visibility = if (count > 0) View.VISIBLE else View.GONE
+                            text = count.toString()
+                        }
+
+                        // Vet badge
+                        findViewById<TextView>(R.id.tvVetMessageBadge)?.apply {
+                            visibility = if (count > 0) View.VISIBLE else View.GONE
+                            text = count.toString()
+                        }
+                    }
+                }
                 // Show correct dashboard based on role
                 if (user.role == "veterinarian") {
                     setupVetDashboard()
@@ -79,8 +102,9 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, com.example.authapp.ui.Vets.FindVetsActivity::class.java))
 
         }
-        findViewById<CardView>(R.id.cardMessages).setOnClickListener     { toast("Messages — coming soon") }
-
+        findViewById<CardView>(R.id.cardMessages).setOnClickListener {
+            startActivity(Intent(this, InboxActivity::class.java))
+        }
         findViewById<CardView>(R.id.cardAppointments).setOnClickListener {
             startActivity(Intent(this, MyAppointmentsActivity::class.java))
         }
@@ -102,9 +126,12 @@ class DashboardActivity : AppCompatActivity() {
         findViewById<CardView>(R.id.cardVetProfile).setOnClickListener {
             startActivity(Intent(this, com.example.authapp.ui.Vets.VetProfileSetupActivity::class.java))
         }
+
+        findViewById<CardView>(R.id.cardVetMessages).setOnClickListener {
+            startActivity(Intent(this, InboxActivity::class.java))
+        }
         // Stubs for vet cards
         findViewById<CardView>(R.id.cardPatients).setOnClickListener     { toast("My Patients — coming soon") }
-        findViewById<CardView>(R.id.cardVetMessages).setOnClickListener  { toast("Messages — coming soon") }
     }
 
     private fun setupLogout() {

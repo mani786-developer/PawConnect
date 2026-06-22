@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import coil.load
 import com.example.authapp.R
 import com.example.authapp.ui.Appointments.BookAppointmentActivity
+import com.example.authapp.ui.Chat.ChatActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -59,7 +60,10 @@ class VetDetailActivity : AppCompatActivity() {
         }
 
         btnMsg.setOnClickListener {
-            Toast.makeText(this, "Chat coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, ChatActivity::class.java).apply {
+                putExtra("otherUserId", vetUid)
+                putExtra("otherName",   "Dr. $vetName")
+            })
         }
 
         supportActionBar?.apply {

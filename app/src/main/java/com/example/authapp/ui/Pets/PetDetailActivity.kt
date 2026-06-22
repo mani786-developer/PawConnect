@@ -1,5 +1,6 @@
 package com.example.authapp.ui.pets
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -17,6 +18,7 @@ import com.example.authapp.domain.repository.AuthRepository
 import com.example.authapp.presentation.pets.PetActionState
 import com.example.authapp.presentation.pets.PetEvent
 import com.example.authapp.presentation.pets.PetViewModel
+import com.example.authapp.ui.Chat.ChatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -66,9 +68,20 @@ class PetDetailActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvAgeGender).text   = "${pet.age} year${if (pet.age != 1) "s" else ""} • ${pet.gender}"
         findViewById<TextView>(R.id.tvDescription).text = pet.description.ifEmpty { "No description added" }
 
-        // Only show delete button if this is the owner's pet
+//        // Only show delete button if this is the owner's pet
+//        val isOwner = pet.ownerId == authRepository.getCurrentUid()
+//        findViewById<Button>(R.id.btnDelete).visibility = if (isOwner) View.VISIBLE else View.GONE
+
+        val btnMessageOwner = findViewById<Button>(R.id.btnMessageOwner)
+        // Hide if viewing your own pet
         val isOwner = pet.ownerId == authRepository.getCurrentUid()
-        findViewById<Button>(R.id.btnDelete).visibility = if (isOwner) View.VISIBLE else View.GONE
+        btnMessageOwner.visibility = if (isOwner) View.GONE else View.VISIBLE
+        btnMessageOwner.setOnClickListener {
+            startActivity(Intent(this, ChatActivity::class.java).apply {
+                putExtra("otherUserId", pet.ownerId)
+                putExtra("otherName",   "Pet Owner")
+            })
+        }
     }
 
     private fun setupDeleteButton(pet: Pet) {
