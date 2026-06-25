@@ -1,4 +1,4 @@
-package com.example.authapp.ui.pets
+package com.example.authapp.ui.Pets
 
 import android.content.Intent
 import android.os.Bundle

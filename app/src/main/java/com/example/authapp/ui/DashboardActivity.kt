@@ -15,6 +15,7 @@ import com.example.authapp.presentation.chat.ChatViewModel
 import com.example.authapp.ui.Appointments.VetAppointmentsActivity
 import com.example.authapp.ui.Appointments.MyAppointmentsActivity
 import com.example.authapp.ui.Chat.InboxActivity
+import com.example.authapp.ui.Vets.MyPatientsActivity
 import com.example.authapp.ui.discover.DiscoverActivity
 import com.example.authapp.ui.pets.MyPetsActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -123,14 +124,19 @@ class DashboardActivity : AppCompatActivity() {
         findViewById<View>(R.id.rowOwner1).visibility = View.GONE
         findViewById<View>(R.id.rowOwner2).visibility = View.GONE
         findViewById<View>(R.id.rowOwner3).visibility = View.GONE
-        findViewById<View>(R.id.rowVet1).visibility   = View.VISIBLE
-        findViewById<View>(R.id.rowVet2).visibility   = View.VISIBLE
+        findViewById<View>(R.id.rowVet1).visibility = View.VISIBLE
+        findViewById<View>(R.id.rowVet2).visibility = View.VISIBLE
 
         findViewById<CardView>(R.id.cardVetAppointments).setOnClickListener {
             startActivity(Intent(this, VetAppointmentsActivity::class.java))
         }
         findViewById<CardView>(R.id.cardVetProfile).setOnClickListener {
-            startActivity(Intent(this, com.example.authapp.ui.Vets.VetProfileSetupActivity::class.java))
+            startActivity(
+                Intent(
+                    this,
+                    com.example.authapp.ui.Vets.VetProfileSetupActivity::class.java
+                )
+            )
         }
         findViewById<CardView>(R.id.cardVetMessages).setOnClickListener {
             startActivity(Intent(this, InboxActivity::class.java))
@@ -138,9 +144,11 @@ class DashboardActivity : AppCompatActivity() {
         findViewById<CardView>(R.id.cardVetProfile).setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
-        // Stubs for vet cards
-        findViewById<CardView>(R.id.cardPatients).setOnClickListener     { toast("My Patients — coming soon") }
+        findViewById<CardView>(R.id.cardPatients).setOnClickListener {
+            startActivity(Intent(this, MyPatientsActivity::class.java))
+        }
     }
+
 
     private fun setupLogout() {
         findViewById<TextView>(R.id.tvLogout).setOnClickListener {

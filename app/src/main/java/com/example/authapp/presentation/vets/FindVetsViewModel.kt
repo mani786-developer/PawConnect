@@ -45,12 +45,22 @@ class FindVetsViewModel @Inject constructor(
 
     fun filterVets(name: String = "", city: String = "", specialization: String = "") {
         val filtered = allVets.filter { vet ->
-            (name.isBlank() || vet.displayName.contains(name, ignoreCase = true) ||
-                    vet.clinicName.contains(name, ignoreCase = true)) &&
-                    (city.isBlank() || vet.city.equals(city, ignoreCase = true)) &&
-                    (specialization.isBlank() || specialization == "All" ||
-                            vet.specialization.equals(specialization, ignoreCase = true))
+
+            val matchesName = name.isBlank() ||
+                    vet.displayName.contains(name, ignoreCase = true) ||
+                    vet.clinicName.contains(name, ignoreCase = true)
+
+            val matchesCity = city.isBlank() ||
+                    city == "All" ||
+                    vet.city.trim().equals(city.trim(), ignoreCase = true)
+
+            val matchesSpecialization = specialization.isBlank() ||
+                    specialization == "All" ||
+                    vet.specialization.trim().equals(specialization.trim(), ignoreCase = true)
+
+            matchesName && matchesCity && matchesSpecialization
         }
+
         _uiState.value = UiState.Success(filtered)
     }
 
