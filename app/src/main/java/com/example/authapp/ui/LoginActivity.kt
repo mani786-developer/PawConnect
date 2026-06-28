@@ -121,10 +121,11 @@ class LoginActivity : AppCompatActivity() {
                     viewModel.events.collect { event ->
                         when (event) {
                             is LoginEvent.NavigateTo -> {
-                                val dest = HomeActivity::class.java  // temporary until RoleSelection is built
+                                val dest = DashboardActivity::class.java
                                 startActivity(Intent(this@LoginActivity, dest).apply {
                                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 })
+                                finish()
                             }
                         }
                     }

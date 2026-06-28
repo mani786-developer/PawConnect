@@ -20,10 +20,37 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun login(email: String, password: String): Result<User> = runCatching {
+
+        // Sign in
         val result = auth.signInWithEmailAndPassword(email, password).await()
-        val uid = result.user!!.uid
-        val snap = firestore.collection(USERS).document(uid).get().await()
-        snap.toUser()
+
+        val firebaseUser = result.user ?: error("User not found")
+
+        // Refresh user from Firebase
+        firebaseUser.reload().await()
+
+        // Check verification from Firebase Authentication
+        if (!firebaseUser.isEmailVerified) {
+            auth.signOut()
+            error("Please verify your email first")
+        }
+
+        // Update Firestore so it stays in sync
+        firestore.collection(USERS)
+            .document(firebaseUser.uid)
+            .update("isEmailVerified", true)
+            .await()
+
+        // Read user document
+        val snap = firestore.collection(USERS)
+            .document(firebaseUser.uid)
+            .get()
+            .await()
+
+        // Return user with verified=true
+        snap.toUser().copy(
+            isEmailVerified = true
+        )
     }
 
     override suspend fun signUp(
@@ -49,17 +76,24 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun reloadAndGetUser(): Result<User> = runCatching {
-        auth.currentUser?.reload()?.await() ?: error("No user signed in")
+
         val firebaseUser = auth.currentUser ?: error("No user signed in")
+
+        firebaseUser.reload().await()
+
         if (firebaseUser.isEmailVerified) {
             firestore.collection(USERS)
                 .document(firebaseUser.uid)
                 .update("isEmailVerified", true)
                 .await()
         }
-        User(
-            uid             = firebaseUser.uid,
-            email           = firebaseUser.email ?: "",
+
+        val snap = firestore.collection(USERS)
+            .document(firebaseUser.uid)
+            .get()
+            .await()
+
+        snap.toUser().copy(
             isEmailVerified = firebaseUser.isEmailVerified
         )
     }
